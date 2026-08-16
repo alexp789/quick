@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: quick
+  labels:
+    app.kubernetes.io/name: quick
+    app.kubernetes.io/part-of: chickenrat-services

@@ -1,0 +1,14 @@
+node_modules
+.expo
+dist
+web-build
+.git
+.gitignore
+.github
+k8s
+coverage
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+*.md
