@@ -1,17 +1,24 @@
 {
   "expo": {
-    "name": "quick",
+    "name": "Quick Community Race Timer",
     "slug": "quick",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "scheme": "quick",
+    "userInterfaceStyle": "dark",
+    "updates": {
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "uk.co.chickenrat.quick"
     },
     "android": {
+      "package": "uk.co.chickenrat.quick",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#0F172A",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -19,7 +26,21 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png",
+      "name": "Quick - Community Running Race Manager",
+      "shortName": "Quick Race",
+      "themeColor": "#0F172A",
+      "backgroundColor": "#0A0F1D",
+      "display": "standalone",
+      "scope": "/",
+      "startUrl": "/",
+      "description": "100% offline-first community running race timing and management application hosted at https://quick.chickenrat.co.uk"
+    },
+    "plugins": [
+      "expo-sqlite",
+      "expo-sharing",
+      "expo-updates"
+    ]
   }
 }

@@ -1,5 +1,5 @@
 import { registerRootComponent } from 'expo';
-
+import './src/utils/updateService'; // Initialize PWA service worker & native update listeners
 import App from './App';
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);

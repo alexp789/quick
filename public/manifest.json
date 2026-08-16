@@ -1,0 +1,19 @@
+{
+  "name": "Quick - Community Running Race Manager",
+  "short_name": "Quick Race",
+  "description": "100% Offline-First Community Running Race Timing & Management",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0A0F1D",
+  "theme_color": "#0F172A",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["sports", "utilities", "productivity"]
+}
