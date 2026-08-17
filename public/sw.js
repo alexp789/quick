@@ -9,6 +9,11 @@ const PRECACHE_ASSETS = [
   '/index.html',
   '/manifest.json',
   '/favicon.ico',
+  '/logo.svg',
+  '/apple-touch-icon.png',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png',
+  '/icons/maskable-icon-512.png',
 ];
 
 // Install: Cache essential shell and activate immediately
