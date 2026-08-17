@@ -17,6 +17,8 @@ import { triggerHaptic } from '../utils/hapticsUtils';
 
 interface RacesListScreenProps {
   onClose: () => void;
+  initialCreate?: boolean;
+  initialImport?: boolean;
 }
 
 const DISTANCE_PRESETS = [
@@ -30,11 +32,16 @@ const DISTANCE_PRESETS = [
   { label: 'Custom', meters: 5000 },
 ];
 
-export const RacesListScreen: React.FC<RacesListScreenProps> = ({ onClose }) => {
+export const RacesListScreen: React.FC<RacesListScreenProps> = ({
+  onClose,
+  initialCreate = false,
+  initialImport = false,
+}) => {
   const {
     races,
     activeRace,
     selectRace,
+    deselectRace,
     createRace,
     deleteRace,
     loadSampleRace,
@@ -42,8 +49,8 @@ export const RacesListScreen: React.FC<RacesListScreenProps> = ({ onClose }) => 
     importRaceBackup,
   } = useRaceContext();
 
-  const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
-  const [showImportModal, setShowImportModal] = useState<boolean>(false);
+  const [showCreateModal, setShowCreateModal] = useState<boolean>(initialCreate);
+  const [showImportModal, setShowImportModal] = useState<boolean>(initialImport);
   const [importJsonText, setImportJsonText] = useState<string>('');
 
   // Form State
@@ -174,6 +181,28 @@ export const RacesListScreen: React.FC<RacesListScreenProps> = ({ onClose }) => 
           <Text style={styles.importBtnText}>📥 Restore</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Active Race Bar & Deselect Option */}
+      {activeRace && (
+        <View style={styles.activeRaceBar}>
+          <View style={styles.activeRaceBarLeft}>
+            <Text style={styles.activeRaceBarLabel}>CURRENTLY ACTIVE RACE</Text>
+            <Text style={styles.activeRaceBarName} numberOfLines={1}>
+              {activeRace.name}
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={styles.deselectBtn}
+            onPress={() => {
+              triggerHaptic('light');
+              deselectRace();
+              onClose();
+            }}
+          >
+            <Text style={styles.deselectBtnText}>Deselect</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Races List */}
       <FlatList
@@ -516,6 +545,46 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
     color: '#94A3B8',
+  },
+  activeRaceBar: {
+    marginHorizontal: 14,
+    marginBottom: 4,
+    backgroundColor: '#1E293B',
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderLeftWidth: 4,
+    borderLeftColor: '#10B981',
+  },
+  activeRaceBarLeft: {
+    flex: 1,
+    marginRight: 10,
+  },
+  activeRaceBarLabel: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#10B981',
+    letterSpacing: 0.5,
+  },
+  activeRaceBarName: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#F8FAFC',
+    marginTop: 2,
+  },
+  deselectBtn: {
+    backgroundColor: '#334155',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  deselectBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#FCA5A5',
   },
   listContainer: {
     padding: 14,

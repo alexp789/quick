@@ -13,7 +13,7 @@ export const Header: React.FC<HeaderProps> = ({ race, onOpenRaceList }) => {
   const { formattedTime, isRunning } = useRaceTimer(race);
 
   const getStatusBadge = () => {
-    if (!race) return { text: 'NO RACE', bg: '#475569', color: '#F1F5F9' };
+    if (!race) return { text: 'NOT SELECTED', bg: '#B45309', color: '#FEF3C7' };
     if (race.status === 'in_progress') return { text: '● LIVE', bg: '#DC2626', color: '#FFFFFF' };
     if (race.status === 'completed') return { text: 'COMPLETED', bg: '#10B981', color: '#FFFFFF' };
     if (race.status === 'ready') return { text: 'READY', bg: '#3B82F6', color: '#FFFFFF' };
@@ -26,22 +26,20 @@ export const Header: React.FC<HeaderProps> = ({ race, onOpenRaceList }) => {
     <View style={styles.container}>
       <View style={styles.leftCol}>
         <TouchableOpacity style={styles.titleRow} onPress={onOpenRaceList} activeOpacity={0.7}>
-          <View style={styles.iconCircle}>
-            <Text style={styles.iconEmoji}>⏱️</Text>
+          <View style={[styles.iconCircle, !race && styles.iconCircleNoRace]}>
+            <Text style={styles.iconEmoji}>{race ? '⏱️' : '🏁'}</Text>
           </View>
           <View style={styles.titleTexts}>
-            <Text style={styles.raceTitle} numberOfLines={1}>
-              {race ? race.name : 'Select or Create Race'}
+            <Text style={[styles.raceTitle, !race && styles.raceTitleNoRace]} numberOfLines={1}>
+              {race ? race.name : 'No Race Selected'}
             </Text>
             <View style={styles.metaRow}>
               <View style={[styles.statusBadge, { backgroundColor: status.bg }]}>
                 <Text style={[styles.statusText, { color: status.color }]}>{status.text}</Text>
               </View>
-              {race && (
-                <Text style={styles.distText}>
-                  {race.distanceLabel} • {race.date}
-                </Text>
-              )}
+              <Text style={styles.distText}>
+                {race ? `${race.distanceLabel} • ${race.date}` : 'Tap to select or create a race'}
+              </Text>
             </View>
           </View>
           <Text style={styles.chevron}>▼</Text>
@@ -86,6 +84,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  iconCircleNoRace: {
+    backgroundColor: '#334155',
+    borderWidth: 1,
+    borderColor: '#D97706',
+  },
   iconEmoji: {
     fontSize: 18,
   },
@@ -97,6 +100,9 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#F8FAFC',
     letterSpacing: -0.3,
+  },
+  raceTitleNoRace: {
+    color: '#FDE68A',
   },
   metaRow: {
     flexDirection: 'row',

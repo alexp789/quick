@@ -18,6 +18,7 @@ interface RaceContextType {
 
   // Race Management
   selectRace: (raceId: string) => Promise<void>;
+  deselectRace: () => void;
   createRace: (data: Partial<Race>) => Promise<Race>;
   updateRace: (race: Race) => Promise<void>;
   deleteRace: (raceId: string) => Promise<void>;
@@ -70,13 +71,20 @@ export const RaceProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const allRaces = await db.getAllRaces();
       setRaces(allRaces);
 
-      if (allRaces.length > 0) {
-        // If no active race, pick the first or keep existing
-        const targetId = activeRace?.id || allRaces[0].id;
-        const current = allRaces.find((r) => r.id === targetId) || allRaces[0];
-        setActiveRace(current);
-        await loadRaceSubData(current.id);
+      if (activeRace?.id) {
+        const current = allRaces.find((r) => r.id === activeRace.id);
+        if (current) {
+          setActiveRace(current);
+          await loadRaceSubData(current.id);
+        } else {
+          setActiveRace(null);
+          setCategories([]);
+          setRunners([]);
+          setTimingEvents([]);
+          setUnassignedMarks([]);
+        }
       } else {
+        // Initially no race is selected
         setActiveRace(null);
         setCategories([]);
         setRunners([]);
@@ -115,6 +123,14 @@ export const RaceProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setActiveRace(target);
       await loadRaceSubData(target.id);
     }
+  };
+
+  const deselectRace = () => {
+    setActiveRace(null);
+    setCategories([]);
+    setRunners([]);
+    setTimingEvents([]);
+    setUnassignedMarks([]);
   };
 
   // CREATE RACE
@@ -659,6 +675,7 @@ export const RaceProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLoading,
         activeDeviceId,
         selectRace,
+        deselectRace,
         createRace,
         updateRace,
         deleteRace,

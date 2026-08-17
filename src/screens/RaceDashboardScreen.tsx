@@ -11,6 +11,7 @@ import {
 import { useRaceContext } from '../context/RaceContext';
 import { Header } from '../components/Header';
 import { UpdateBanner } from '../components/UpdateBanner';
+import { NoRaceSelectedView } from '../components/NoRaceSelectedView';
 import { TimingScreen } from './TimingScreen';
 import { RunnersScreen } from './RunnersScreen';
 import { CategoriesScreen } from './CategoriesScreen';
@@ -22,13 +23,40 @@ import { triggerHaptic } from '../utils/hapticsUtils';
 type DashboardTab = 'timing' | 'runners' | 'categories' | 'results' | 'reports';
 
 export const RaceDashboardScreen: React.FC = () => {
-  const { activeRace } = useRaceContext();
+  const { activeRace, loadSampleRace } = useRaceContext();
   const [currentTab, setCurrentTab] = useState<DashboardTab>('timing');
   const [showRacesModal, setShowRacesModal] = useState<boolean>(false);
+  const [modalInitialCreate, setModalInitialCreate] = useState<boolean>(false);
+  const [modalInitialImport, setModalInitialImport] = useState<boolean>(false);
 
   const handleTabChange = (tab: DashboardTab) => {
     triggerHaptic('light');
+    if (!activeRace) {
+      // If no race is selected, guide the user to select or create a race
+      setModalInitialCreate(false);
+      setModalInitialImport(false);
+      setShowRacesModal(true);
+      return;
+    }
     setCurrentTab(tab);
+  };
+
+  const handleOpenRaceList = () => {
+    setModalInitialCreate(false);
+    setModalInitialImport(false);
+    setShowRacesModal(true);
+  };
+
+  const handleOpenCreateRace = () => {
+    setModalInitialCreate(true);
+    setModalInitialImport(false);
+    setShowRacesModal(true);
+  };
+
+  const handleOpenImportRace = () => {
+    setModalInitialCreate(false);
+    setModalInitialImport(true);
+    setShowRacesModal(true);
   };
 
   const tabs: { id: DashboardTab; label: string; icon: string }[] = [
@@ -45,7 +73,7 @@ export const RaceDashboardScreen: React.FC = () => {
         {/* Top Header */}
         <Header
           race={activeRace}
-          onOpenRaceList={() => setShowRacesModal(true)}
+          onOpenRaceList={handleOpenRaceList}
         />
 
         {/* Live App Update Notification */}
@@ -53,17 +81,28 @@ export const RaceDashboardScreen: React.FC = () => {
 
         {/* Screen Body */}
         <View style={styles.body}>
-          {currentTab === 'timing' && <TimingScreen />}
-          {currentTab === 'runners' && <RunnersScreen />}
-          {currentTab === 'categories' && <CategoriesScreen />}
-          {currentTab === 'results' && <ResultsScreen />}
-          {currentTab === 'reports' && <ReportsAndSyncScreen />}
+          {!activeRace ? (
+            <NoRaceSelectedView
+              onCreateRace={handleOpenCreateRace}
+              onOpenRaceList={handleOpenRaceList}
+              onLoadSample={loadSampleRace}
+              onImportBackup={handleOpenImportRace}
+            />
+          ) : (
+            <>
+              {currentTab === 'timing' && <TimingScreen />}
+              {currentTab === 'runners' && <RunnersScreen />}
+              {currentTab === 'categories' && <CategoriesScreen />}
+              {currentTab === 'results' && <ResultsScreen />}
+              {currentTab === 'reports' && <ReportsAndSyncScreen />}
+            </>
+          )}
         </View>
 
         {/* Bottom Navigation Bar */}
-        <View style={styles.bottomNav}>
+        <View style={[styles.bottomNav, !activeRace && styles.bottomNavDisabled]}>
           {tabs.map((t) => {
-            const isActive = currentTab === t.id;
+            const isActive = activeRace ? currentTab === t.id : false;
             return (
               <TouchableOpacity
                 key={t.id}
@@ -90,7 +129,15 @@ export const RaceDashboardScreen: React.FC = () => {
           presentationStyle="pageSheet"
           onRequestClose={() => setShowRacesModal(false)}
         >
-          <RacesListScreen onClose={() => setShowRacesModal(false)} />
+          <RacesListScreen
+            onClose={() => {
+              setShowRacesModal(false);
+              setModalInitialCreate(false);
+              setModalInitialImport(false);
+            }}
+            initialCreate={modalInitialCreate}
+            initialImport={modalInitialImport}
+          />
         </Modal>
       </View>
     </SafeAreaView>
@@ -116,6 +163,9 @@ const styles = StyleSheet.create({
     borderTopColor: '#1E293B',
     paddingVertical: 6,
     paddingBottom: Platform.OS === 'ios' ? 14 : 8,
+  },
+  bottomNavDisabled: {
+    opacity: 0.5,
   },
   navItem: {
     flex: 1,
