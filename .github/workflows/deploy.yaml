@@ -11,6 +11,8 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  # Suppress Node.js 20 deprecation warnings on newer Node 24 runners
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: 'true'
 
 jobs:
   build-and-push:
@@ -44,7 +46,7 @@ jobs:
             type=semver,pattern={{version}}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
